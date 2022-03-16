@@ -1,4 +1,5 @@
 # imports
+import utils as u
 
 # storage for dynamic database access
 # syntax is name -> new object
@@ -23,7 +24,9 @@ def routeToResponse(requestmethod, path, body):
     # otherwise
     else:
         match splitpath[0]:
+            # path of /
+            case "":
+                return u.sendFile("files/index.html", "text/html")
             # if the path doesn't match anything (404)
             case _:
-                # TODO change this to an actual 404
-                return "404"
+                return u.sendFile("files/notfound.html", "text/html", "404 Not Found")

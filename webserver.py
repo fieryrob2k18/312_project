@@ -1,29 +1,15 @@
 import sys
+import router as r
 
 DEBUG = True
 
 #Read request and send response
 def handle_conn(conn):
     parsed_req = read_req(conn)
-    #TODO: Hand stuff over to router
-    if parsed_req["headers"]["path"] == "/":
-        serverfile = open("files/index.html", "rb")
-        cnt = serverfile.read()
-        cntlen = len(cnt)
-        response = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: "
-        response += str(cntlen) + "\r\n\r\n"
-        conn.send(response.encode("utf-8"))
-        conn.send(cnt)
-    else:
-        serverfile = open("files/notfound.html", "rb")
-        cnt = serverfile.read()
-        cntlen = len(cnt)
-        response = "HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\nContent-Length: "
-        response += str(cntlen) + "\r\n\r\n"
-        conn.send(response.encode("utf-8"))
-        conn.send(cnt)
+    # router is going to call a response generator or file sender and return encoded response back
+    response = r.routeToResponse(parsed_req["headers"]["request_type"], parsed_req["headers"]["path"], parsed_req["body"])
+    conn.send(response)
     conn.close()
-
 
 #Read in header, process then handle body
 def read_req(conn):
