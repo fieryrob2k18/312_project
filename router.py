@@ -1,0 +1,29 @@
+# imports
+
+# storage for dynamic database access
+# syntax is name -> new object
+databases = {}
+
+# requestmethod is GET, POST, etc
+# path is requested path
+# body is anything after \r\n\r\n
+def routeToResponse(requestmethod, path, body):
+    # break path down by removing first / and splitting by /
+    # i.e. /test/test2/test3 -> test, test2, test3
+    # home path ("/") will be a list with a single empty string in it
+    splitpath = path.strip("/").split("/")
+    # if first part of path is a database name
+    if splitpath[0] in databases:
+        match requestmethod:
+            case "GET":
+                # TODO: actually save the returned info and do something with it
+                databases[splitpath[0]].get(splitpath[1], body)
+            case "POST":
+                databases[splitpath[0]].post(splitpath[1], body)
+    # otherwise
+    else:
+        match splitpath[0]:
+            # if the path doesn't match anything (404)
+            case _:
+                # TODO change this to an actual 404
+                return "404"
