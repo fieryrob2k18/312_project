@@ -3,6 +3,7 @@ import utils as u
 
 # storage for dynamic database access
 # syntax is name -> new object
+# TODO actually create database objects
 databases = {}
 
 # requestmethod is GET, POST, etc
@@ -15,12 +16,15 @@ def routeToResponse(requestmethod, path, body):
     splitpath = path.strip("/").split("/")
     # if first part of path is a database name
     if splitpath[0] in databases:
+        databasename = splitpath[0]
+        # TODO decide what to do if prompt is None, if anything
+        prompt = splitpath[1] if len(splitpath) > 1 else None
         match requestmethod:
+            # TODO: actually save the returned info and do something with it
             case "GET":
-                # TODO: actually save the returned info and do something with it
-                databases[splitpath[0]].get(splitpath[1], body)
+                databasename.get(prompt, body)
             case "POST":
-                databases[splitpath[0]].post(splitpath[1], body)
+                databasename.post(prompt, body)
     # otherwise
     else:
         match splitpath[0]:
