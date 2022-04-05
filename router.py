@@ -1,5 +1,9 @@
 # imports
+import sys
 import utils as u
+
+# debug
+DEBUG = True
 
 # storage for dynamic database access
 # syntax is name -> new object
@@ -9,7 +13,8 @@ databases = {}
 # requestmethod is GET, POST, etc
 # path is requested path
 # body is anything after \r\n\r\n
-def routeToResponse(requestmethod, path, body):
+# headers is the dict of headers
+def routeToResponse(requestmethod, path, body, headers):
     # break path down by removing first / and splitting by /
     # i.e. /test/test2/test3 -> test, test2, test3
     # home path ("/") will be a list with a single empty string in it
@@ -28,8 +33,18 @@ def routeToResponse(requestmethod, path, body):
     # otherwise
     else:
         match splitpath[0]:
+            # login form submission
+            # TODO this should probably be moved to database code above
+            case "login-form":
+                username = u.digestLoginForm(headers, body)
+                if DEBUG:
+                    print(username)
+                    sys.stdout.flush()
+                    sys.stderr.flush()
+                # TODO put username in database, send user somewhere else
             # path of /
             case "":
+                # TODO call the HTML template method here
                 return u.sendFile("files/index.html", "text/html")
             # if the path doesn't match anything (404)
             case _:

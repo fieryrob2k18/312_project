@@ -23,3 +23,16 @@ def sendFile(filename, contenttype, responsecode="200 OK"):
     # if file is not found
     else:
         return generateResponse("The requested content does not exist".encode(), "text/plain", "404 Not Found", [])
+
+# takes in the multipart login form and returns the desired pieces
+def digestLoginForm(headers, body):
+    # headers are decoded, body is still encoded
+    boundary = headers["Content-Type"].replace("multipart/form-data; boundary=", "", 1)
+    # this is a list of bytes
+    encodedparts = body.split(boundary.encode())
+    # looking for 'Content-Disposition: form-data; name="username"'
+    username = ""
+    for part in encodedparts:
+        if b'name="username"' in part:
+            username = part.decode()
+    return username
