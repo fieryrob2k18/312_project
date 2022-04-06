@@ -9,7 +9,7 @@ def handle_conn(conn):
     # this makes body empty if read_req does not return one
     body = parsed_req["body"] if "body" in parsed_req else ""
     # router is going to call a response generator or file sender and return encoded response back
-    response = r.routeToResponse(parsed_req["headers"]["request_type"], parsed_req["headers"]["path"], body.encode("utf-8"), parsed_req["headers"])
+    response = r.routeToResponse(parsed_req["headers"]["request_type"], parsed_req["headers"]["path"], body, parsed_req["headers"])
     conn.send(response)
     conn.close()
 

@@ -1,6 +1,7 @@
 # imports
 import sys
 import utils as u
+import template as t
 
 # debug
 DEBUG = True
@@ -41,11 +42,13 @@ def routeToResponse(requestmethod, path, body, headers):
                     print(username)
                     sys.stdout.flush()
                     sys.stderr.flush()
-                # TODO put username in database, send user somewhere else
+                # TODO put username in database
+                return u.generateResponse("".encode(), "", "303 See Other", ["Location: /"])
             # path of /
             case "":
-                # TODO call the HTML template method here
-                return u.sendFile("files/index.html", "text/html")
+                with open("files/index.html", "rb") as content:
+                    html = content.read()
+                return u.generateResponse(t.renderHtmlTemplate(html), "text/html", "200 OK", [])
             # if the path doesn't match anything (404)
             case _:
                 return u.sendFile("files/notfound.html", "text/html", "404 Not Found")
