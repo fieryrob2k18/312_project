@@ -46,7 +46,7 @@ def routeToResponse(requestmethod, path, body, headers):
                 return u.generateResponse("".encode(), "", "303 See Other", ["Location: /"])
             # path of /
             case "":
-                with open("files/index.html", "rb") as content:
+                with open("files/login.html", "rb") as content:
                     html = content.read()
                 return u.generateResponse(t.renderHtmlTemplate(html), "text/html", "200 OK", [])
             # if the path doesn't match anything (404)
