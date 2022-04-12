@@ -37,16 +37,32 @@ def routeToResponse(requestmethod, path, body, headers):
             # login form submission
             # TODO this should probably be moved to database code above
             case "login-form":
-                username = u.digestLoginForm(headers, body)
+                username = u.digestForm(headers, body, ["username"])["username"].decode()
                 if DEBUG:
                     print(username)
                     sys.stdout.flush()
                     sys.stderr.flush()
                 # TODO put username in database
-                return u.generateResponse("".encode(), "", "303 See Other", ["Location: /"])
+                # redirect user to main page
+                return u.generateResponse("".encode(), "", "303 See Other", ["Location: /main"])
+            # comment form submission
+            case "comment-form":
+                comment = u.digestForm(headers, body, ["comment"])["comment"].decode()
+                if DEBUG:
+                    print(comment)
+                    sys.stdout.flush()
+                    sys.stderr.flush()
+                # TODO do something with comment
+                # redirect user to main page
+                return u.generateResponse("".encode(), "", "303 See Other", ["Location: /main"])
             # path of /
             case "":
                 with open("files/login.html", "rb") as content:
+                    html = content.read()
+                return u.generateResponse(t.renderHtmlTemplate(html), "text/html", "200 OK", [])
+            # path of /main
+            case "main":
+                with open("files/main.html", "rb") as content:
                     html = content.read()
                 return u.generateResponse(t.renderHtmlTemplate(html), "text/html", "200 OK", [])
             # if the path doesn't match anything (404)
