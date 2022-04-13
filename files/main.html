@@ -6,6 +6,16 @@
     <h1>hi</h1>
     <p>welcome</p>
 
+
+    <h2>Profile Picture</h2>
+    <form action="/image-upload" id="image-form" method="post" enctype="multipart/form-data">
+      <input value="1234" name="xsrf_token" hidden>
+      <br/>
+      <label for="form-file">Image: </label>
+      <input id="form-file" type="file" name="upload">
+      <input type="submit" value="Upload">
+   </form>
+
     {{users}}
 
     <form action="/comment-form" id="comment-form" method="post" enctype="multipart/form-data">
