@@ -18,6 +18,14 @@ class MongoDB:
         r = self.collection.find_one({"_id": id})
         return bson.json_util.dumps(r)
 
+    def getMany(self, key, value):
+        r = list(self.collection.find({key: value}))
+        return bson.json_util.dumps(r)
+
+    def getAll(self):
+        r = self.collection.find({})
+        return bson.json_util.dumps(r)
+
     def updateOne(self, id, body):
         self.collection.update_one({"_id": id}, json.loads(body))
 
