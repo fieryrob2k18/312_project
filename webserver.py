@@ -1,5 +1,6 @@
 import sys
 import router as r
+from websocket import webSocketServer
 
 DEBUG = True
 
@@ -11,6 +12,8 @@ def handle_conn(conn):
     # router is going to call a response generator or file sender and return encoded response back
     response = r.routeToResponse(parsed_req["headers"]["request_type"], parsed_req["headers"]["path"], body, parsed_req["headers"])
     conn.send(response)
+    if parsed_req["headers"]["path"] == "/websocket":
+        webSocketServer(conn)
     conn.close()
 
 #Read in header, process then handle body

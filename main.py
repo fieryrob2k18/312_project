@@ -16,7 +16,6 @@ def main():
     soc.listen(5)
 
     while True:
-        print("Server has started!", flush=True)
         conn, addr = soc.accept()
         if DEBUG:
             print("New Connection from: ", addr, flush=True)
