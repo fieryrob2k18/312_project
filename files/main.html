@@ -6,26 +6,17 @@
     <h1>hi</h1>
     <p>welcome</p>
 
-
-    <h2>Profile Picture</h2>
-    <form action="/image-upload" id="image-form" method="post" enctype="multipart/form-data">
-      <input value="1234" name="xsrf_token" hidden>
-      <br/>
-      <label for="form-file">Image: </label>
-      <input id="form-file" type="file" name="upload">
-      <input type="submit" value="Upload">
-   </form>
-
     {{users}}
 
-    <label for="chat-comment">Chat: </label>
-<input id="chat-comment" type="text" name="comment">
+    <form action="/comment-form" id="comment-form" method="post" enctype="multipart/form-data">
+        <label for="comment">Comment: </label>
+        <textarea id="comment" name="comment" cols="40" rows="6"></textarea>
+        <br/>
+        <input type="submit" value="Post">
+    </form>
 
-<button onclick="sendMessage()">Send</button>
+    {{comments}}
 
-<div id="chat"></div>
-
-<script src="/functions.js"></script>
-
+</form>
   </body>
 </html>
