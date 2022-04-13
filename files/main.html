@@ -8,7 +8,12 @@
 
     {{users}}
 
-    <p>reserved for form code</p>
+    <form action="/comment-form" id="comment-form" method="post" enctype="multipart/form-data">
+        <label for="comment">Comment: </label>
+        <textarea id="comment" name="comment" cols="40" rows="6"></textarea>
+        <br/>
+        <input type="submit" value="Post">
+    </form>
 
     {{comments}}
 
