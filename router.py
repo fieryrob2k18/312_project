@@ -25,26 +25,28 @@ def routeToResponse(requestmethod, path, body, headers):
     match splitpath[0]:
         # login form submission
         case "login-form":
-            username = u.digestForm(headers, body, ["username"])["username"].decode()
-            if DEBUG:
-                print(username)
-                sys.stdout.flush()
-                sys.stderr.flush()
-            # put username in database
-            databases["usernames"].addOne(0, json.dumps({"username": username}))
-            # redirect user to main page
-            return u.generateResponse("".encode(), "", "303 See Other", ["Location: /main"])
+            if requestmethod == "POST":
+                username = u.digestForm(headers, body, ["username"])["username"].decode()
+                if DEBUG:
+                    print(username)
+                    sys.stdout.flush()
+                    sys.stderr.flush()
+                # put username in database
+                databases["usernames"].addOne(0, json.dumps({"username": username}))
+                # redirect user to main page
+                return u.generateResponse("".encode(), "", "303 See Other", ["Location: /main"])
         # comment form submission
         case "comment-form":
-            comment = u.digestForm(headers, body, ["comment"])["comment"].decode()
-            if DEBUG:
-                print(comment)
-                sys.stdout.flush()
-                sys.stderr.flush()
-            # put comment in database
-            databases["comments"].addOne(0, json.dumps({"comment": comment}))
-            # redirect user to main page
-            return u.generateResponse("".encode(), "", "303 See Other", ["Location: /main"])
+            if requestmethod == "POST":
+                comment = u.digestForm(headers, body, ["comment"])["comment"].decode()
+                if DEBUG:
+                    print(comment)
+                    sys.stdout.flush()
+                    sys.stderr.flush()
+                # put comment in database
+                databases["comments"].addOne(0, json.dumps({"comment": comment}))
+                # redirect user to main page
+                return u.generateResponse("".encode(), "", "303 See Other", ["Location: /main"])
         # path of /
         case "":
             with open("files/login.html", "rb") as content:
