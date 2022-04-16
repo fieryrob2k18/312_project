@@ -23,7 +23,7 @@ if __name__ == "__main__":
     HOST, PORT = "0.0.0.0", 8000
 
     # Create the server, binding to localhost on port 8000
-    with socketserver.TCPServer((HOST, PORT), MyTCPHandler) as server:
+    with socketserver.ThreadingTCPServer((HOST, PORT), MyTCPHandler) as server:
         print("Server started!", flush=True)
         # Activate the server; this will keep running until you
         # interrupt the program with Ctrl-C
