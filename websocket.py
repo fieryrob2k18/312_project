@@ -2,9 +2,11 @@ import base64
 from encodings import utf_8
 import hashlib
 import json
+import random
 
 from tomli import TOMLDecodeError
 
+activeConnections = {}
 
 def upgrade(req):
     key = req["Sec-WebSocket-Key"]
@@ -20,7 +22,8 @@ def upgrade(req):
 
 def webSocketServer(conn):
     while True:
-        username = "goose"
+        username = "goose#" + str(random.randint(0, 10000))
+        activeConnections[username] = conn
         buffer = conn.recv(1024)
         opcode = buffer[0] & 15
         maskBit = (buffer[1] & 128) / 128
@@ -60,6 +63,7 @@ def webSocketServer(conn):
                     counter = 0
 
         if opcode == 8:
+            del activeConnections[username]
             frame = makeFrame("")
             conn.send(frame)
             return
@@ -77,7 +81,8 @@ def webSocketServer(conn):
                     }
                 )
                 frame = makeFrame(response)
-                conn.send(frame)
+                for c in activeConnections.items():
+                    c[1].send(frame)
 
         if opcode == 2:
             # Format is binary
@@ -115,7 +120,6 @@ def makeFrame(payload):
         payloadIndex = 10
 
     for b in payload:
-        print(b, flush=True)
         #I fucking hate python
         frame[payloadIndex] = int.from_bytes(b.encode("utf-8"), "big")
         payloadIndex = payloadIndex + 1
