@@ -40,10 +40,3 @@ class MongoDB:
 
     def removeOne(self, id):
         self.collection.delete_one({"_id": id})
-
-# storage for database access
-def getDatabases():
-# syntax is name -> new object
-    return {"usernames": MongoDB("mongo", "users", "usernames"),
-             "comments": MongoDB("mongo", "comments", "comments"),
-             "imgcnt": MongoDB("mongo", "imgcnt", "imgcnt")}

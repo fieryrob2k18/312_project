@@ -8,7 +8,11 @@ import mongo as m
 # debug
 DEBUG = True
 
-
+# storage for database access
+# syntax is name -> new object
+databases = {"usernames": m.MongoDB("mongo", "users", "usernames"),
+             "comments": m.MongoDB("mongo", "comments", "comments"),
+             "imgcnt": m.MongoDB("mongo", "imgcnt", "imgcnt")}
 
 # requestmethod is GET, POST, etc
 # path is requested path
