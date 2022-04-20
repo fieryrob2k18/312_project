@@ -8,11 +8,7 @@ import mongo as m
 # debug
 DEBUG = True
 
-# storage for database access
-# syntax is name -> new object
-databases = {"usernames": m.MongoDB("mongo", "users", "usernames"),
-             "comments": m.MongoDB("mongo", "comments", "comments"),
-             "imgcnt": m.MongoDB("mongo", "imgcnt", "imgcnt")}
+
 
 # requestmethod is GET, POST, etc
 # path is requested path
@@ -30,7 +26,7 @@ def routeToResponse(requestmethod, path, body, headers):
             if DEBUG:
                 print(username, flush=True)
             # put username in database
-            databases["usernames"].addOne(0, json.dumps({"username": username}))
+            databases["usernames"].addOne(json.dumps({"username": username}))
             # redirect user to main page
             return u.generateResponse("".encode(), "", "303 See Other", ["Location: /main"])
         # comment form submission
@@ -39,7 +35,7 @@ def routeToResponse(requestmethod, path, body, headers):
             if DEBUG:
                 print(comment, flush=True)
             # put comment in database
-            databases["comments"].addOne(0, json.dumps({"comment": comment}))
+            databases["comments"].addOne(json.dumps({"comment": comment}))
             # redirect user to main page
             return u.generateResponse("".encode(), "", "303 See Other", ["Location: /main"])
         # pfp upload form submission
