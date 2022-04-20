@@ -30,7 +30,7 @@ def test1_func():
 def comments_func():
     comments = u.get_comments()
     if len(comments) == 0:
-        return "<h3>No comments currently</h3>"
+        return "<h3>No comments currently!</h3>\r\n"
     out = ""
     for comment in comments:
         out += "<p>" + html.escape(comment) + "</p>\r\n"
