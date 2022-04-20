@@ -1,25 +1,28 @@
-#temporary storage for users
-#keys are usernames, values are lists of comments
-#TODO: Replace with proper db calls
-users = {}
+import mongo as m
+import sys
+import json
 
-
-#Adds comment to users,
-#also creates user if necessary
-def add_comment(user, comment):
-    if users.has_key(user):
-        posts = users[user]
-        posts += comment
-        users[user] = posts
-    else:
-        users[user] = [comment]
-
+#TODO: Update to work with Rin's db code
+databases = {"usernames": m.MongoDB("mongo", "users", "usernames"),
+             "comments": m.MongoDB("mongo", "comments", "comments")}
 
 def get_users():
-    return users.keys()
+    users = json.loads(databases["usernames"].getAll())
+    print(users)
+    print(type(users))
+    sys.stdout.flush()
+    sys.stderr.flush()
+    if len(users) == 0:
+        return []
+    out = []
+    for user in users:
+        out.append(user["username"])
+    return out
 
 
+#TODO: Fix this
 def get_comments():
+    return ""
     out = []
     for key in users:
         for comment in users[key]:

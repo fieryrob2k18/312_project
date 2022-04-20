@@ -28,6 +28,7 @@ def test1_func():
 
 
 def comments_func():
+    return "<h3>No comments currently!</h3>\r\n"
     comments = u.get_comments()
     if len(comments) == 0:
         return "<h3>No comments currently!</h3>\r\n"
@@ -43,7 +44,8 @@ def users_func():
         return "<h3>No users online currently!</h3>"
     out = "<h3>Users Online:</h3>\r\n"
     for user in users:
-        out += "<p>" + html.escape(user) + "</p>\r\n"
+        out += "<div class=\"username\"><p>" + html.escape(user) + "</p>\r\n"
+        out += "<img class=\"profileimg\" src=\"default.jpg\"></div>"
     return out
 
 

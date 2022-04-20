@@ -57,6 +57,11 @@ def routeToResponse(requestmethod, path, body, headers):
             with open("files/main.html", "rb") as content:
                 html = content.read()
             return u.generateResponse(t.renderHtmlTemplate(html), "text/html", "200 OK", [])
+        # default user profile image
+        case "default.jpg":
+            with open("files/default.jpg", "rb") as content:
+                outimg = content.read()
+            return u.generateResponse(outimg, "image/jpeg", "200 OK", ["X-Content-Type-Options: nosniff"])
         # if the path doesn't match anything (404)
         case _:
             return u.sendFile("files/notfound.html", "text/html", "404 Not Found")
