@@ -1,5 +1,7 @@
 # imports
 import os.path
+import json
+from types import NoneType
 
 # formats a response based on the inputs, encoding type is utf-8 unless otherwise specified
 def generateResponse(body: bytes, contenttype: str, responsecode: str, headers: list[str], encoding="utf-8"):
@@ -35,5 +37,18 @@ def digestForm(headers, body, desiredparts: list[str]):
         for desired in desiredparts:
             blurb = 'name="'+desired+'"'
             if blurb.encode() in part:
-                toreturn[desired] = part
+                toreturn[desired] = part.split(b"\r\n\r\n", 1)[1].strip(b"--").strip()
     return toreturn
+
+# saves an image given the image bytes and the counter database object (for automatic naming)
+def saveImage(imagebyes, imagecounter):
+    temp = imagecounter.getFirst()
+    if temp is None:
+        imagecounter.addOne(json.dumps({"mostrecent": 1}))
+    aidee = json.loads(imagecounter.getFirst())["mostrecent"]
+    # TODO change this to whatever filename prefix is used for sending the images to the client
+    filename = "image/pic" + str(aidee) + ".jpg"
+    with open("files/" + filename, "wb") as content:
+        content.write(imagebyes)
+    imagecounter.updateOne(json.loads(imagecounter.getFirst())["_id"]["$oid"], json.dumps({"mostrecent": aidee + 1}))
+    return filename
