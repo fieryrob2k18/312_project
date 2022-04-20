@@ -11,7 +11,8 @@ DEBUG = True
 # storage for database access
 # syntax is name -> new object
 databases = {"usernames": m.MongoDB("mongo", "users", "usernames"),
-             "comments": m.MongoDB("mongo", "comments", "comments")}
+             "comments": m.MongoDB("mongo", "comments", "comments"),
+             "imgcnt": m.MongoDB("mongo", "imgcnt", "imgcnt")}
 
 # requestmethod is GET, POST, etc
 # path is requested path
@@ -27,9 +28,7 @@ def routeToResponse(requestmethod, path, body, headers):
         case "login-form":
             username = u.digestForm(headers, body, ["username"])["username"].decode()
             if DEBUG:
-                print(username)
-                sys.stdout.flush()
-                sys.stderr.flush()
+                print(username, flush=True)
             # put username in database
             databases["usernames"].addOne(0, json.dumps({"username": username}))
             # redirect user to main page
@@ -38,11 +37,20 @@ def routeToResponse(requestmethod, path, body, headers):
         case "comment-form":
             comment = u.digestForm(headers, body, ["comment"])["comment"].decode()
             if DEBUG:
-                print(comment)
-                sys.stdout.flush()
-                sys.stderr.flush()
+                print(comment, flush=True)
             # put comment in database
             databases["comments"].addOne(0, json.dumps({"comment": comment}))
+            # redirect user to main page
+            return u.generateResponse("".encode(), "", "303 See Other", ["Location: /main"])
+        # pfp upload form submission
+        case "image-upload":
+            imagebytes = u.digestForm(headers, body, ["upload"])["upload"]
+            # save image
+            filename = u.saveImage(imagebytes, databases["imgcnt"]) if imagebytes != b"" else ""
+            if DEBUG:
+                print(filename, flush=True)
+                return u.sendFile("files/" + filename, "image/jpeg")
+            # TODO add filename to users database once username is associated
             # redirect user to main page
             return u.generateResponse("".encode(), "", "303 See Other", ["Location: /main"])
         # path of /
