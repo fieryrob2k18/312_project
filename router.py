@@ -1,6 +1,7 @@
 # imports
 import sys
 import json
+from websocket import upgrade
 import utils as u
 import template as t
 import mongo as m
@@ -57,6 +58,14 @@ def routeToResponse(requestmethod, path, body, headers):
             with open("files/main.html", "rb") as content:
                 html = content.read()
             return u.generateResponse(t.renderHtmlTemplate(html), "text/html", "200 OK", [])
+        # path of /functions.js
+        case "functions.js":
+            with open("files/functions.js", "rb") as content:
+                file = content.read()
+            return u.generateResponse(t.renderHtmlTemplate(file), "text/javascript", "200 OK", [])
+        #Websocket handshake
+        case "websocket":
+            return u.generateResponse("".encode(), "", "101 Switching Protocols", upgrade(headers))
         # if the path doesn't match anything (404)
         case _:
             return u.sendFile("files/notfound.html", "text/html", "404 Not Found")
