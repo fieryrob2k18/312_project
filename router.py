@@ -1,6 +1,7 @@
 # imports
 import sys
 import json
+from websocket import upgrade
 import utils as u
 import template as t
 import mongo as m
@@ -26,6 +27,7 @@ def routeToResponse(requestmethod, path, body, headers):
     match splitpath[0]:
         # login form submission
         case "login-form":
+          if requestmethod == "POST":
             username = u.digestForm(headers, body, ["username"])["username"].decode()
             if DEBUG:
                 print(username, flush=True)
@@ -33,17 +35,9 @@ def routeToResponse(requestmethod, path, body, headers):
             databases["usernames"].addOne(json.dumps({"username": username}))
             # redirect user to main page
             return u.generateResponse("".encode(), "", "303 See Other", ["Location: /main"])
-        # comment form submission
-        case "comment-form":
-            comment = u.digestForm(headers, body, ["comment"])["comment"].decode()
-            if DEBUG:
-                print(comment, flush=True)
-            # put comment in database
-            databases["comments"].addOne(json.dumps({"comment": comment}))
-            # redirect user to main page
-            return u.generateResponse("".encode(), "", "303 See Other", ["Location: /main"])
         # pfp upload form submission
         case "image-upload":
+          if requestmethod == "POST":
             imagebytes = u.digestForm(headers, body, ["upload"])["upload"]
             # save image
             filename = u.saveImage(imagebytes, databases["imgcnt"]) if imagebytes != b"" else ""
@@ -63,6 +57,14 @@ def routeToResponse(requestmethod, path, body, headers):
             with open("files/main.html", "rb") as content:
                 html = content.read()
             return u.generateResponse(t.renderHtmlTemplate(html), "text/html", "200 OK", [])
+        # path of /functions.js
+        case "functions.js":
+            with open("files/functions.js", "rb") as content:
+                file = content.read()
+            return u.generateResponse(t.renderHtmlTemplate(file), "text/javascript", "200 OK", [])
+        #Websocket handshake
+        case "websocket":
+            return u.generateResponse("".encode(), "", "101 Switching Protocols", upgrade(headers))
         # if the path doesn't match anything (404)
         case _:
             return u.sendFile("files/notfound.html", "text/html", "404 Not Found")

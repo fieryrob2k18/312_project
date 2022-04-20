@@ -18,15 +18,14 @@
 
     {{users}}
 
-    <form action="/comment-form" id="comment-form" method="post" enctype="multipart/form-data">
-        <label for="comment">Comment: </label>
-        <textarea id="comment" name="comment" cols="40" rows="6"></textarea>
-        <br/>
-        <input type="submit" value="Post">
-    </form>
+    <label for="chat-comment">Chat: </label>
+<input id="chat-comment" type="text" name="comment">
 
-    {{comments}}
+<button onclick="sendMessage()">Send</button>
 
-</form>
+<div id="chat"></div>
+
+<script src="/functions.js"></script>
+
   </body>
 </html>
