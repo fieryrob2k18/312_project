@@ -15,6 +15,7 @@ databases = {"usernames": m.MongoDB("mongo", "users", "usernames"),
              "comments": m.MongoDB("mongo", "comments", "comments"),
              "imgcnt": m.MongoDB("mongo", "imgcnt", "imgcnt")}
 
+
 # requestmethod is GET, POST, etc
 # path is requested path
 # body is anything after \r\n\r\n
@@ -27,26 +28,26 @@ def routeToResponse(requestmethod, path, body, headers):
     match splitpath[0]:
         # login form submission
         case "login-form":
-          if requestmethod == "POST":
-            username = u.digestForm(headers, body, ["username"])["username"].decode()
-            if DEBUG:
-                print(username, flush=True)
-            # put username in database
-            databases["usernames"].addOne(json.dumps({"username": username}))
-            # redirect user to main page
-            return u.generateResponse("".encode(), "", "303 See Other", ["Location: /main"])
+            if requestmethod == "POST":
+                username = u.digestForm(headers, body, ["username"])["username"].decode()
+                if DEBUG:
+                    print(username, flush=True)
+                # put username in database
+                databases["usernames"].addOne(json.dumps({"username": username}))
+                # redirect user to main page
+                return u.generateResponse("".encode(), "", "303 See Other", ["Location: /main"])
         # pfp upload form submission
         case "image-upload":
-          if requestmethod == "POST":
-            imagebytes = u.digestForm(headers, body, ["upload"])["upload"]
-            # save image
-            filename = u.saveImage(imagebytes, databases["imgcnt"]) if imagebytes != b"" else ""
-            if DEBUG:
-                print(filename, flush=True)
-                return u.sendFile("files/" + filename, "image/jpeg")
-            # TODO add filename to users database once username is associated
-            # redirect user to main page
-            return u.generateResponse("".encode(), "", "303 See Other", ["Location: /main"])
+            if requestmethod == "POST":
+                imagebytes = u.digestForm(headers, body, ["upload"])["upload"]
+                # save image
+                filename = u.saveImage(imagebytes, databases["imgcnt"]) if imagebytes != b"" else ""
+                if DEBUG:
+                    print(filename, flush=True)
+                    return u.sendFile("files/" + filename, "image/jpeg")
+                # TODO add filename to users database once username is associated
+                # redirect user to main page
+                return u.generateResponse("".encode(), "", "303 See Other", ["Location: /main"])
         # path of /
         case "":
             with open("files/login.html", "rb") as content:
@@ -62,7 +63,7 @@ def routeToResponse(requestmethod, path, body, headers):
             with open("files/functions.js", "rb") as content:
                 file = content.read()
             return u.generateResponse(t.renderHtmlTemplate(file), "text/javascript", "200 OK", [])
-        #Websocket handshake
+        # Websocket handshake
         case "websocket":
             return u.generateResponse("".encode(), "", "101 Switching Protocols", upgrade(headers))
         # if the path doesn't match anything (404)
