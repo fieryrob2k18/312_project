@@ -58,6 +58,11 @@ def routeToResponse(requestmethod, path, body, headers):
             with open("files/main.html", "rb") as content:
                 html = content.read()
             return u.generateResponse(t.renderHtmlTemplate(html), "text/html", "200 OK", [])
+        # default user profile image
+        case "default.jpg":
+            with open("files/default.jpg", "rb") as content:
+                outimg = content.read()
+            return u.generateResponse(outimg, "image/jpeg", "200 OK", ["X-Content-Type-Options: nosniff"])
         # path of /functions.js
         case "functions.js":
             with open("files/functions.js", "rb") as content:

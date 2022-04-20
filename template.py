@@ -1,3 +1,6 @@
+import users as u
+import html
+
 #Definitions:
 #Values not final, syntax TBD
 
@@ -24,8 +27,32 @@ def test1_func():
     return "<h1>This text made by html template{{}}</h1>"
 
 
+def comments_func():
+    return "<h3>No comments currently!</h3>\r\n"
+    comments = u.get_comments()
+    if len(comments) == 0:
+        return "<h3>No comments currently!</h3>\r\n"
+    out = ""
+    for comment in comments:
+        out += "<p>" + html.escape(comment) + "</p>\r\n"
+    return out
+
+
+def users_func():
+    users = u.get_users()
+    if len(users) == 0:
+        return "<h3>No users online currently!</h3>"
+    out = "<h3>Users Online:</h3>\r\n"
+    for user in users:
+        out += "<div class=\"username\"><p>" + html.escape(user) + "</p>\r\n"
+        out += "<img class=\"profileimg\" src=\"default.jpg\"></div>"
+    return out
+
+
 #dictionary for storing html template functions
-tmpl_dict = {"TEST1": test1_func}
+tmpl_dict = {"TEST1": test1_func,
+             "users": users_func,
+             "comments": comments_func}
 
 
 #Replace template vars in html with output
