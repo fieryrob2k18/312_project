@@ -20,7 +20,10 @@ class MongoDB:
 
     def getFirst(self):
         r = self.collection.find_one({})
-        return bson.json_util.dumps(r)
+        if r is None:
+            return None
+        else:
+            return bson.json_util.dumps(r)
 
     def getMany(self, key, value):
         r = list(self.collection.find({key: value}))

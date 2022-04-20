@@ -1,6 +1,7 @@
 # imports
 import os.path
 import json
+from types import NoneType
 
 # formats a response based on the inputs, encoding type is utf-8 unless otherwise specified
 def generateResponse(body: bytes, contenttype: str, responsecode: str, headers: list[str], encoding="utf-8"):
