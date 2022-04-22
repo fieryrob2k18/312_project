@@ -1,0 +1,19 @@
+body {
+    background-color: wheat;
+    background-image: url("background.jpg");
+    background-repeat: no-repeat;
+    background-position: right top;
+}
+
+.profileimg {
+    max-width: 120px;
+}
+
+.username {
+    background-color: tan;
+    max-height: 500px;
+    width: 25%;
+    word-break: break-word;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
