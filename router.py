@@ -70,7 +70,7 @@ def routeToResponse(requestmethod, path, body, headers):
         case "functions.js":
             with open("files/functions.js", "rb") as content:
                 file = content.read()
-            return u.generateResponse(t.renderHtmlTemplate(file), "text/javascript", "200 OK", [])
+            return u.sendFile("files/functions.js", "text/javascript")
         # Websocket handshake
         case "websocket":
             return u.generateResponse("".encode(), "", "101 Switching Protocols", upgrade(headers))
