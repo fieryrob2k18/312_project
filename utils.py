@@ -24,7 +24,9 @@ def sendFile(filename, contenttype, responsecode="200 OK"):
             return generateResponse(body, contenttype, responsecode, ["X-Content-Type-Options:nosniff"])
     # if file is not found
     else:
-        return generateResponse("The requested content does not exist".encode(), "text/plain", "404 Not Found", [])
+        with open("files/notfound.html", "rb") as content:
+            body = content.read()
+            return generateResponse(body, "text/html", "404 Not Found", ["X-Content-Type-Options:nosniff"])
 
 # takes in a multipart form and returns the desired pieces, still encoded
 def digestForm(headers, body, desiredparts: list[str]):
