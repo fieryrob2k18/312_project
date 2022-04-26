@@ -1,2 +1,3 @@
 pymongo
 black
+bcrypt
