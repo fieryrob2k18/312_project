@@ -81,6 +81,9 @@ def routeToResponse(requestmethod, path, body, headers):
         # Websocket handshake
         case "websocket":
             return u.generateResponse("".encode(), "", "101 Switching Protocols", upgrade(headers))
+        #Getting chat history
+        case "chat-history":
+            return u.sendFile("files/notfound.html", "text/html", "404 Not Found")
         # if the path doesn't match anything (404)
         case _:
             return u.sendFile("files/notfound.html", "text/html", "404 Not Found")
