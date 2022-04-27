@@ -26,6 +26,9 @@ def routeToResponse(requestmethod, path, body, headers):
     # home path ("/") will be a list with a single empty string in it
     splitpath = path.strip("/").split("/")
     match splitpath[0]:
+        # image url
+        case "image":
+            return u.sendFile("files/image/" + splitpath[1], "image/jpeg")
         # login form submission
         case "login-form":
             if requestmethod == "POST":
@@ -67,7 +70,7 @@ def routeToResponse(requestmethod, path, body, headers):
         case "functions.js":
             with open("files/functions.js", "rb") as content:
                 file = content.read()
-            return u.generateResponse(t.renderHtmlTemplate(file), "text/javascript", "200 OK", [])
+            return u.sendFile("files/functions.js", "text/javascript")
         # Websocket handshake
         case "websocket":
             return u.generateResponse("".encode(), "", "101 Switching Protocols", upgrade(headers))
