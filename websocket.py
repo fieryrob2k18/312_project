@@ -1,12 +1,16 @@
 import base64
 from encodings import utf_8
 import hashlib
+import html
 import json
 import random
+import mongo as m
 
 from tomli import TOMLDecodeError
 
 activeConnections = {}
+
+databases = {"comments": m.MongoDB("mongo", "comments", "comments")}
 
 def upgrade(req):
     key = req["Sec-WebSocket-Key"]
@@ -72,7 +76,7 @@ def webSocketServer(conn):
             # Format is text
             data = json.loads(payload)
             if data["messageType"] == "chatMessage":
-                messageText = data["comment"]
+                messageText = html.escape(data["comment"])
                 response = json.dumps(
                     {
                         "messageType": "chatMessage",
@@ -80,6 +84,8 @@ def webSocketServer(conn):
                         "comment": messageText,
                     }
                 )
+                databases["comments"].addOne(json.dumps({"username": username,
+                                                         "comment": messageText}))
                 frame = makeFrame(response)
                 for c in activeConnections.items():
                     c[1].send(frame)
