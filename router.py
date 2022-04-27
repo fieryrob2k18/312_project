@@ -61,9 +61,19 @@ def routeToResponse(requestmethod, path, body, headers):
             with open("files/main.html", "rb") as content:
                 html = content.read()
             return u.generateResponse(t.renderHtmlTemplate(html), "text/html", "200 OK", [])
+        #stylesheet
+        case "goosestyle.css":
+            with open("files/goosestyle.css", "rb") as content:
+                html = content.read()
+            return u.generateResponse(t.renderHtmlTemplate(html), "text/css", "200 OK", [])
         # default user profile image
         case "default.jpg":
             with open("files/default.jpg", "rb") as content:
+                outimg = content.read()
+            return u.generateResponse(outimg, "image/jpeg", "200 OK", ["X-Content-Type-Options: nosniff"])
+        #background image for style
+        case "background.jpg":
+            with open("files/background.jpg", "rb") as content:
                 outimg = content.read()
             return u.generateResponse(outimg, "image/jpeg", "200 OK", ["X-Content-Type-Options: nosniff"])
         # path of /functions.js
@@ -74,6 +84,10 @@ def routeToResponse(requestmethod, path, body, headers):
         # Websocket handshake
         case "websocket":
             return u.generateResponse("".encode(), "", "101 Switching Protocols", upgrade(headers))
+        #Getting chat history
+        case "chat-history":
+            chatJson = u.getChatHistory(databases["comments"])
+            return u.generateResponse(chatJson, "application/json", "200 OK", [])
         # if the path doesn't match anything (404)
         case _:
             return u.sendFile("files/notfound.html", "text/html", "404 Not Found")

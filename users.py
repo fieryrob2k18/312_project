@@ -8,10 +8,10 @@ databases = {"usernames": m.MongoDB("mongo", "users", "usernames"),
 
 def get_users():
     users = json.loads(databases["usernames"].getAll())
-    print(users)
-    print(type(users))
-    sys.stdout.flush()
-    sys.stderr.flush()
+    #print(users)
+    #print(type(users))
+    #sys.stdout.flush()
+    #sys.stderr.flush()
     if len(users) == 0:
         return []
     out = []

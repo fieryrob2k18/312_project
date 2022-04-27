@@ -2,6 +2,7 @@
 import os.path
 import json
 from types import NoneType
+import mongo as m
 
 # formats a response based on the inputs, encoding type is utf-8 unless otherwise specified
 def generateResponse(body: bytes, contenttype: str, responsecode: str, headers: list[str], encoding="utf-8"):
@@ -54,3 +55,11 @@ def saveImage(imagebyes, imagecounter):
         content.write(imagebyes)
     imagecounter.updateOne(json.loads(imagecounter.getFirst())["_id"]["$oid"], json.dumps({"mostrecent": aidee + 1}))
     return filename
+
+
+#Read chat history, json response
+def getChatHistory(db):
+    comments = db.getAll()
+    print(comments)
+    print(type(comments))
+    return bytes(comments, "utf-8")
