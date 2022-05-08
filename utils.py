@@ -10,23 +10,25 @@ DEBUG = True
 
 # takes digestForm map and usernames database and checks for correct login
 def handleLogin(userpassmap, userbase):
-    username = html.escape(userpassmap["username"])
+    username = html.escape(userpassmap["username"].decode())
     password = userpassmap["password"]
-    result = userbase.getFirst({"username": username})
-    if result is None:
-        return False
-    return bcrypt.checkpw(password, result["password"])
+    result = json.loads(userbase.getMany("username", username))
+    if not result:
+        return None
+    print(result[0], flush=True)
+    if bcrypt.checkpw(password, result[0]["password"].encode()):
+        return username
 
 # takes digestForm map and usernames database and html escapes username and salts/hashes pass before storing both
 def handleRegister(userpassmap, userbase):
-    username = html.escape(userpassmap["username"])
+    username = html.escape(userpassmap["username"].decode())
     # TODO check if username exists and deny "overwrite"
     password = userpassmap["password"]
     hashedpass = bcrypt.hashpw(password, bcrypt.gensalt())
     if DEBUG:
         print(username, flush=True)
     # put username and hashed password in database
-    userbase.addOne(json.dumps({"username": username, "password": hashedpass}))
+    userbase.addOne(json.dumps({"username": username, "password": hashedpass.decode()}))
 
 # formats a response based on the inputs, encoding type is utf-8 unless otherwise specified
 def generateResponse(body: bytes, contenttype: str, responsecode: str, headers: list[str], encoding="utf-8"):

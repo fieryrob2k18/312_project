@@ -33,7 +33,7 @@ def routeToResponse(requestmethod, path, body, headers):
         # login form submission
         case "register-form":
             if requestmethod == "POST":
-                u.handleRegister(u.digestForm(headers, body, ["username", "password"], databases["usernames"]))
+                u.handleRegister(u.digestForm(headers, body, ["username", "password"]), databases["usernames"])
                 # redirect user to main page
                 return u.generateResponse("".encode(), "", "303 See Other", ["Location: /"])
         case "login-form":
