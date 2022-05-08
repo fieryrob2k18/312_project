@@ -107,6 +107,7 @@ def webSocketServer(conn, username):
                 )
                 frame = makeFrame(response)
                 activeConnections[user].send(frame)
+                conn.send(frame)
         if opcode == 2:
             # Format is binary
             return
