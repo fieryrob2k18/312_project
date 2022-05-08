@@ -43,9 +43,13 @@ def users_func():
     if len(users) == 0:
         return "<h3>No users online currently!</h3>"
     out = "<h3>Users Online:</h3>\r\n"
-    for user in users:
+    for user in users.keys():
         out += "<div class=\"username\"><p>" + html.escape(user) + "</p>\r\n"
-        out += "<img class=\"profileimg\" src=\"default.jpg\"></div>"
+        if users[user] == "":
+            out += "<img class=\"profileimg\" src=\"default.jpg\"></div>"
+        else:
+            #assume no bad stuff in profile pictures
+            out += "<img class=\"profileimg\" src=\"" + users[user] + "\"></div>"
     return out
 
 

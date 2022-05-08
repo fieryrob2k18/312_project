@@ -59,6 +59,19 @@ def routeToResponse(requestmethod, path, body, headers):
                     print(filename, flush=True)
                     return u.sendFile("files/" + filename, "image/jpeg")
                 # TODO add filename to users database once username is associated
+                authtoken = None
+                if "Cookie" in inhead:
+                    cookieslist = headers["Cookie"].split(";")
+                    for cookie in cookieslist:
+                        cookie = cookie.strip()
+                        if cookie.startswith("authtoken"):
+                            authtoken = cookie.split("=")[1]
+                            username = u.checkAuthToken(authtoken, databases["authtokens"])
+                            if uname is not None:
+                                result = json.loads(databases["users"].getMany("username", username))
+                                if result is not None:
+                                    id = result[0]["_id"]["$oid"]
+                                    m.updateOne(id, {"profilepic": filename})
                 # redirect user to main page
                 return u.generateResponse("".encode(), "", "303 See Other", ["Location: /main"])
         # path of /

@@ -14,9 +14,12 @@ def get_users():
     #sys.stderr.flush()
     if len(users) == 0:
         return []
-    out = []
+    out = {}
     for user in users:
-        out.append(user["username"])
+        if user.has_key("profilepic"):
+            out[user["username"]] = user["profilepic"]
+        else:
+            out[user["username"]]= ""
     return out
 
 
