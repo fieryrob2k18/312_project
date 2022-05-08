@@ -6,7 +6,6 @@ from websocket import upgrade
 import utils as u
 import template as t
 import mongo as m
-import html
 
 # debug
 DEBUG = False
@@ -34,39 +33,21 @@ def routeToResponse(requestmethod, path, body, headers):
         # login form submission
         case "register-form":
             if requestmethod == "POST":
-                username = html.escape(u.digestForm(headers, body, ["username"])["username"].decode())
-                password = u.digestForm(headers, body, ["password"])["password"]
-                salt = bcrypt.gensalt()
-                hash = bcrypt.hashpw(password, salt).decode()
-                if DEBUG:
-                    print(username, flush=True)
-                # put username in database
-                databases["usernames"].addOne(json.dumps({"username": username, "hash": hash, "salt": salt.decode()}))
+                u.handleRegister(u.digestForm(headers, body, ["username", "password"], databases["usernames"]))
                 # redirect user to main page
                 return u.generateResponse("".encode(), "", "303 See Other", ["Location: /main", "Set-Cookie: username="+username])
         case "login-form":
             if requestmethod == "POST":
-                username = u.digestForm(headers, body, ["username"])["username"].decode()
-                password = u.digestForm(headers, body, ["password"])["password"]
-
-                user = json.loads(databases["usernames"].getMany("username", username))[0]
-                if user == []:
-                    # User does not exist
-                    return u.generateResponse("".encode(), "", "303 See Other", ["Location: /"])
-
-                salt = user["salt"].encode()
-                hash = bcrypt.hashpw(password, salt).decode()
-                if DEBUG:
-                    print(username, flush=True)
-                # put username in database
-
-                if user["hash"] == hash:
+                username = u.handleLogin(u.digestForm(headers, body, ["username", "password"], databases["usernames"]))
+                if username is not None:
+                    if DEBUG:
+                        print(username, flush=True)
                     # Sucessful login
                     return u.generateResponse("".encode(), "", "303 See Other", ["Location: /main", "Set-Cookie: username="+username])
                 else:
-                    # Wrong password
+                    # User does not exist OR wrong password
+                    # TODO throw "wrong username or password" error
                     return u.generateResponse("".encode(), "", "303 See Other", ["Location: /"])
-                # redirect user to main page
         # pfp upload form submission
         case "image-upload":
             if requestmethod == "POST":

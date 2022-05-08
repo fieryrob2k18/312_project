@@ -3,6 +3,30 @@ import os.path
 import json
 from types import NoneType
 import mongo as m
+import html
+import bcrypt
+
+DEBUG = True
+
+# takes digestForm map and usernames database and checks for correct login
+def handleLogin(userpassmap, userbase):
+    username = html.escape(userpassmap["username"])
+    password = userpassmap["password"]
+    result = userbase.getFirst({"username": username})
+    if result is None:
+        return False
+    return bcrypt.checkpw(password, result["password"])
+
+# takes digestForm map and usernames database and html escapes username and salts/hashes pass before storing both
+def handleRegister(userpassmap, userbase):
+    username = html.escape(userpassmap["username"])
+    # TODO check if username exists and deny "overwrite"
+    password = userpassmap["password"]
+    hashedpass = bcrypt.hashpw(password, bcrypt.gensalt())
+    if DEBUG:
+        print(username, flush=True)
+    # put username and hashed password in database
+    userbase.addOne(json.dumps({"username": username, "password": hashedpass}))
 
 # formats a response based on the inputs, encoding type is utf-8 unless otherwise specified
 def generateResponse(body: bytes, contenttype: str, responsecode: str, headers: list[str], encoding="utf-8"):
