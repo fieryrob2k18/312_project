@@ -1,12 +1,32 @@
 # imports
 import os.path
-import json
 from types import NoneType
 import mongo as m
 import html
 import bcrypt
+import hashlib
+import random
+import string
+import json
 
 DEBUG = True
+
+# does what it says on the tin and saves the token in database
+def generateAuthToken(username, database):
+    characterbank = string.ascii_letters + string.digits
+    token = "".join(random.choices(characterbank, k=30))
+    hashed = hashlib.sha256(token.encode()).digest()
+    database.addOne({"username": username, "token": hashed})
+    return token
+
+# does what it says on the tin
+def checkAuthToken(token: str, database):
+    hashed = hashlib.sha256(token.encode()).digest()
+    result = json.loads(database.getMany("token", hashed))
+    if not result:
+        return None
+    else:
+        return result[0]["username"]
 
 # takes digestForm map and usernames database and checks for correct login
 def handleLogin(userpassmap, userbase):
@@ -28,7 +48,7 @@ def handleRegister(userpassmap, userbase):
     if DEBUG:
         print(username, flush=True)
     # put username and hashed password in database
-    userbase.addOne(json.dumps({"username": username, "password": hashedpass.decode()}))
+    userbase.addOne({"username": username, "password": hashedpass.decode()})
 
 # formats a response based on the inputs, encoding type is utf-8 unless otherwise specified
 def generateResponse(body: bytes, contenttype: str, responsecode: str, headers: list[str], encoding="utf-8"):
@@ -79,7 +99,7 @@ def saveImage(imagebyes, imagecounter):
     filename = "image/pic" + str(aidee) + ".jpg"
     with open("files/" + filename, "wb") as content:
         content.write(imagebyes)
-    imagecounter.updateOne(json.loads(imagecounter.getFirst())["_id"]["$oid"], json.dumps({"mostrecent": aidee + 1}))
+    imagecounter.updateOne(json.loads(imagecounter.getFirst())["_id"]["$oid"], {"mostrecent": aidee + 1})
     return filename
 
 

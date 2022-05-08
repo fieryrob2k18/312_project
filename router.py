@@ -1,7 +1,6 @@
 # imports
 import sys
 import bcrypt
-import json
 from websocket import upgrade
 import utils as u
 import template as t
@@ -14,7 +13,8 @@ DEBUG = False
 # syntax is name -> new object
 databases = {"usernames": m.MongoDB("mongo", "users", "usernames"),
              "comments": m.MongoDB("mongo", "comments", "comments"),
-             "imgcnt": m.MongoDB("mongo", "imgcnt", "imgcnt")}
+             "imgcnt": m.MongoDB("mongo", "imgcnt", "imgcnt"),
+             "authtokens": m.MongoDB("mongo", "tokens", "authtokens")}
 
 
 # requestmethod is GET, POST, etc
@@ -43,7 +43,8 @@ def routeToResponse(requestmethod, path, body, headers):
                     if DEBUG:
                         print(username, flush=True)
                     # Sucessful login
-                    return u.generateResponse("".encode(), "", "303 See Other", ["Location: /main", "Set-Cookie: username="+username])
+                    authtoken = u.generateAuthToken(username, databases["authtokens"])
+                    return u.generateResponse("".encode(), "", "303 See Other", ["Location: /main", "Set-Cookie: authtoken="+authtoken])
                 else:
                     # User does not exist OR wrong password
                     # TODO throw "wrong username or password" error
