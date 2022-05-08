@@ -25,9 +25,8 @@ def upgrade(req):
     ]
 
 
-def webSocketServer(conn):
+def webSocketServer(conn, username):
     while True:
-        username = "goose#" + str(random.randint(0, 10000))
         activeConnections[username] = conn
         response = json.dumps(
             {"messageType": "userList", "users": list(activeConnections.keys())}

@@ -1,5 +1,6 @@
 import sys
 import router as r
+from utils import checkAuthToken
 from websocket import webSocketServer
 
 DEBUG = False
@@ -13,7 +14,8 @@ def handle_conn(conn):
     response = r.routeToResponse(parsed_req["headers"]["request_type"], parsed_req["headers"]["path"], body, parsed_req["headers"])
     conn.send(response)
     if parsed_req["headers"]["path"] == "/websocket":
-        webSocketServer(conn)
+        username = checkAuthToken(str.split(str.split(parsed_req["headers"]["Cookie"], "authtoken=")[1], ";")[0], r.databases["authtokens"])
+        webSocketServer(conn, username)
     conn.close()
 
 #Read in header, process then handle body

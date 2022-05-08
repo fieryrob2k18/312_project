@@ -31,7 +31,7 @@ function userList(message) {
     let users = document.getElementById('users');
     users.innerHTML = ""
     for (var user in message["users"]) {
-        users.innerHTML += "<b>" + message["users"][user] + "</b>: " + "<br/>";
+        users.innerHTML += "<b>" + message["users"][user] + "</b> " + "<br/>";
     }
 }
 
