@@ -38,7 +38,7 @@ def routeToResponse(requestmethod, path, body, headers):
                 return u.generateResponse("".encode(), "", "303 See Other", ["Location: /"])
         case "login-form":
             if requestmethod == "POST":
-                username = u.handleLogin(u.digestForm(headers, body, ["username", "password"]), databases["usernames"]))
+                username = u.handleLogin(u.digestForm(headers, body, ["username", "password"]), databases["usernames"])
                 if username is not None:
                     if DEBUG:
                         print(username, flush=True)
