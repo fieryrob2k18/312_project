@@ -4,7 +4,7 @@ import webserver
 
 #I use this for deciding when stuff gets printed
 #I can move it if need be - Rob
-DEBUG = True
+DEBUG = False
 
 
 class MyTCPHandler(socketserver.BaseRequestHandler):

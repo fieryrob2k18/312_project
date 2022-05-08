@@ -8,10 +8,25 @@
 
     <form action="/login-form" id="login-form" method="post" enctype="multipart/form-data">
       <label for="login-form-username">Username: </label>
-      <input type=text" id="login-form-username" name="username">
+      <input type="text" id="login-form-username" name="username">
+      <br>
+      <label for="login-form-password">Password: </label>
+      <input type="text" id="login-form-password" name="password">
       <br>
       <input type="submit" value="Login">
+    </form>
 
-</form>
+      <br>
+      <br>
+
+      <form action="/register-form" id="register-form" method="post" enctype="multipart/form-data">
+        <label for="register-form-username">Username: </label>
+        <input type="text" id="register-form-username" name="username">
+        <br>
+        <label for="register-form-password">Password: </label>
+        <input type="text" id="register-form-password" name="password">
+        <br>
+        <input type="submit" value="Register">
+      </form>
   </body>
 </html>

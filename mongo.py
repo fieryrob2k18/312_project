@@ -38,7 +38,6 @@ class MongoDB:
 
     def updateOne(self, id, body):
         new = {"$set": json.loads(body)}
-        print(id, body, new, flush=True)
         self.collection.update_one({"_id": id}, new)
 
     def removeOne(self, id):

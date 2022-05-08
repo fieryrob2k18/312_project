@@ -2,7 +2,7 @@ import sys
 import router as r
 from websocket import webSocketServer
 
-DEBUG = True
+DEBUG = False
 
 #Read request and send response
 def handle_conn(conn):
