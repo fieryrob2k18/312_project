@@ -6,6 +6,7 @@ from websocket import upgrade
 import utils as u
 import template as t
 import mongo as m
+import html
 
 # debug
 DEBUG = False
@@ -30,7 +31,7 @@ def routeToResponse(requestmethod, path, body, headers):
         # login form submission
         case "register-form":
             if requestmethod == "POST":
-                username = u.digestForm(headers, body, ["username"])["username"].decode()
+                username = html.escape(u.digestForm(headers, body, ["username"])["username"].decode())
                 password = u.digestForm(headers, body, ["password"])["password"]
                 salt = bcrypt.gensalt()
                 hash = bcrypt.hashpw(password, salt).decode()
