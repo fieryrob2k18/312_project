@@ -42,13 +42,19 @@ def handleLogin(userpassmap, userbase):
 # takes digestForm map and usernames database and html escapes username and salts/hashes pass before storing both
 def handleRegister(userpassmap, userbase):
     username = html.escape(userpassmap["username"].decode())
-    # TODO check if username exists and deny "overwrite"
+    
+    result = json.loads(userbase.getMany("username", username))
+    if result:
+        print("User already exists!", flush=True)
+        return None
+
     password = userpassmap["password"]
     hashedpass = bcrypt.hashpw(password, bcrypt.gensalt())
     if DEBUG:
         print(username, flush=True)
     # put username and hashed password in database
     userbase.addOne({"username": username, "password": hashedpass.decode()})
+    return username
 
 # formats a response based on the inputs, encoding type is utf-8 unless otherwise specified
 def generateResponse(body: bytes, contenttype: str, responsecode: str, headers: list[str], encoding="utf-8"):
