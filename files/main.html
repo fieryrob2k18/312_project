@@ -1,32 +1,36 @@
 <html>
-  <head>
-    <title>Goose Appreciation Club</title>
-    <link rel="stylesheet" type="text/css" href="goosestyle.css"/>
-  </head>
-  <body onload="welcome();">
-    <h1>Welcome to the Goose Appreciation Club!</h1>
-    <p>Celebrating all things goose since 2022</p>
+
+<head>
+  <title>Goose Appreciation Club</title>
+  <link rel="stylesheet" type="text/css" href="goosestyle.css" />
+</head>
+
+<body onload="welcome();">
+  <h1>Welcome to the Goose Appreciation Club!</h1>
+  <p>Celebrating all things goose since 2022</p>
 
 
-    <h2>Profile Picture</h2>
-    <form action="/image-upload" id="image-form" method="post" enctype="multipart/form-data">
-      <input value="1234" name="xsrf_token" hidden>
-      <br/>
-      <label for="form-file">Image: </label>
-      <input id="form-file" type="file" name="upload">
-      <input type="submit" value="Upload">
-   </form>
+  <h2>Profile Picture</h2>
+  <form action="/image-upload" id="image-form" method="post" enctype="multipart/form-data">
+    <input value="1234" name="xsrf_token" hidden>
+    <br />
+    <label for="form-file">Image: </label>
+    <input id="form-file" type="file" name="upload">
+    <input type="submit" value="Upload">
+  </form>
 
-    {{users}}
 
-    <label for="chat-comment">Chat: </label>
-<input id="chat-comment" type="text" name="comment">
+  <div id="users"></div>
 
-<button onclick="sendMessage()">Send</button>
+  <label for="chat-comment">Chat: </label>
+  <input id="chat-comment" type="text" name="comment">
 
-<div id="chat"></div>
+  <button onclick="sendMessage()">Send</button>
 
-<script src="/functions.js"></script>
+  <div id="chat"></div>
 
-  </body>
+  <script src="/functions.js"></script>
+
+</body>
+
 </html>

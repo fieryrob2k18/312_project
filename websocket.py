@@ -12,6 +12,7 @@ activeConnections = {}
 
 databases = {"comments": m.MongoDB("mongo", "comments", "comments")}
 
+
 def upgrade(req):
     key = req["Sec-WebSocket-Key"]
     GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
@@ -28,6 +29,11 @@ def webSocketServer(conn):
     while True:
         username = "goose#" + str(random.randint(0, 10000))
         activeConnections[username] = conn
+        response = json.dumps(
+            {"messageType": "userList", "users": list(activeConnections.keys())}
+        )
+        frame = makeFrame(response)
+        conn.send(frame)
         buffer = conn.recv(1024)
         opcode = buffer[0] & 15
         maskBit = (buffer[1] & 128) / 128
@@ -84,12 +90,12 @@ def webSocketServer(conn):
                         "comment": messageText,
                     }
                 )
-                databases["comments"].addOne(json.dumps({"username": username,
-                                                         "comment": messageText}))
+                databases["comments"].addOne(
+                    json.dumps({"username": username, "comment": messageText})
+                )
                 frame = makeFrame(response)
                 for c in activeConnections.items():
                     c[1].send(frame)
-
         if opcode == 2:
             # Format is binary
             return
@@ -109,7 +115,7 @@ def makeFrame(payload):
 
     frame = bytearray(length + sizeLength)
     if length == 0:
-        #Check if we want to terminate the connection
+        # Check if we want to terminate the connection
         frame[0] = 136
     else:
         frame[0] = 129
@@ -126,7 +132,7 @@ def makeFrame(payload):
         payloadIndex = 10
 
     for b in payload:
-        #I fucking hate python
+        # I fucking hate python
         frame[payloadIndex] = int.from_bytes(b.encode("utf-8"), "big")
         payloadIndex = payloadIndex + 1
 

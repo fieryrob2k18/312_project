@@ -17,7 +17,7 @@ function sendMessage() {
     chatBox.value = "";
     chatBox.focus();
     if (comment !== "") {
-        socket.send(JSON.stringify({'messageType': 'chatMessage', 'comment': comment}));
+        socket.send(JSON.stringify({ 'messageType': 'chatMessage', 'comment': comment }));
     }
 }
 
@@ -26,6 +26,15 @@ function addMessage(chatMessage) {
     let chat = document.getElementById('chat');
     chat.innerHTML += "<b>" + chatMessage['username'] + "</b>: " + chatMessage["comment"] + "<br/>";
 }
+
+function userList(message) {
+    let users = document.getElementById('users');
+    users.innerHTML = ""
+    for (var user in message["users"]) {
+        users.innerHTML += "<b>" + message["users"][user] + "</b>: " + "<br/>";
+    }
+}
+
 
 // called when the page loads to get the chat_history
 function get_chat_history() {
@@ -51,11 +60,14 @@ socket.onmessage = function (ws_message) {
         case 'chatMessage':
             addMessage(message);
             break;
+        case 'userList':
+            userList(message)
+            break;
         case 'webRTC-offer':
             webRTCConnection.setRemoteDescription(new RTCSessionDescription(message.offer));
             webRTCConnection.createAnswer().then(answer => {
                 webRTCConnection.setLocalDescription(answer);
-                socket.send(JSON.stringify({'messageType': 'webRTC-answer', 'answer': answer}));
+                socket.send(JSON.stringify({ 'messageType': 'webRTC-answer', 'answer': answer }));
             });
             break;
         case 'webRTC-answer':
