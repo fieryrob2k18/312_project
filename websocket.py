@@ -90,11 +90,23 @@ def webSocketServer(conn, username):
                     }
                 )
                 databases["comments"].addOne(
-                    json.dumps({"username": username, "comment": messageText})
+                    {"username": username, "comment": messageText}
                 )
                 frame = makeFrame(response)
                 for c in activeConnections.items():
                     c[1].send(frame)
+            elif data["messageType"] == "directMessage":
+                messageText = html.escape(data["comment"])
+                user = html.escape(data["recipient"])
+                response = json.dumps(
+                    {
+                        "messageType": "directMessage",
+                        "username": username,
+                        "comment": messageText,
+                    }
+                )
+                frame = makeFrame(response)
+                activeConnections[user].send(frame)
         if opcode == 2:
             # Format is binary
             return

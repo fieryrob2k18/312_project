@@ -21,6 +21,19 @@ function sendMessage() {
     }
 }
 
+function sendDirectMessage() {
+    const chatBox = document.getElementById("dm-comment");
+    const comment = chatBox.value;
+    const userBox = document.getElementById("dm-user");
+    const recipient = userBox.value;
+    chatBox.value = "";
+    chatBox.focus();
+    userBox.value = "";
+    if (comment !== "") {
+        socket.send(JSON.stringify({ 'messageType': 'directMessage', 'comment': comment, 'recipient': recipient }));
+    }
+}
+
 // Renders a new chat message to the page
 function addMessage(chatMessage) {
     let chat = document.getElementById('chat');
@@ -59,6 +72,9 @@ socket.onmessage = function (ws_message) {
     switch (messageType) {
         case 'chatMessage':
             addMessage(message);
+            break;
+        case 'directMessage':
+            addMessage(message)
             break;
         case 'userList':
             userList(message)
