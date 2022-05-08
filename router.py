@@ -35,7 +35,7 @@ def routeToResponse(requestmethod, path, body, headers):
             if requestmethod == "POST":
                 u.handleRegister(u.digestForm(headers, body, ["username", "password"], databases["usernames"]))
                 # redirect user to main page
-                return u.generateResponse("".encode(), "", "303 See Other", ["Location: /main", "Set-Cookie: username="+username])
+                return u.generateResponse("".encode(), "", "303 See Other", ["Location: /"])
         case "login-form":
             if requestmethod == "POST":
                 username = u.handleLogin(u.digestForm(headers, body, ["username", "password"], databases["usernames"]))
