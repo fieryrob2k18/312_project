@@ -16,7 +16,7 @@ class MongoDB:
         self.collection.insert_many(body)
 
     def getOne(self, id):
-        r = self.collection.find_one({"_id": id})
+        r = self.collection.find_one({"_id": ObjectId(id)})
         return bson.json_util.dumps(r)
 
     def getFirst(self):
