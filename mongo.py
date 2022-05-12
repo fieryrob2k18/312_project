@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 import bson.json_util
+from bson.objectid import ObjectId
 
 class MongoDB:
     def __init__(self, url, dbName, collName):
@@ -8,7 +9,8 @@ class MongoDB:
         self.collection = database[collName]
 
     def addOne(self, body):
-        self.collection.insert_one(body)
+        r = self.collection.insert_one(body)
+        return r.inserted_id
 
     def addMany(self, body):
         self.collection.insert_many(body)
@@ -37,7 +39,7 @@ class MongoDB:
 
     def updateOne(self, id, body):
         new = {"$set": body}
-        self.collection.update_one({"_id": id}, new)
+        self.collection.update_one({"_id": ObjectId(id)}, new)
 
     def removeOne(self, id):
         self.collection.delete_one({"_id": id})

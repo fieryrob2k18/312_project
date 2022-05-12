@@ -34,10 +34,16 @@ function sendDirectMessage() {
     }
 }
 
+function upGooseMessage(id) {
+    if (id !== "") {
+        socket.send(JSON.stringify({ 'messageType': 'upGoose', 'id': id }));
+    }
+}
+
 // Renders a new chat message to the page
 function addMessage(chatMessage) {
     let chat = document.getElementById('chat');
-    chat.innerHTML += "<b>" + chatMessage['username'] + "</b>: " + chatMessage["comment"] + "<br/>";
+    chat.innerHTML += "<div id='" + chatMessage["id"] + "'> <b>" + chatMessage['username'] + "</b>: " + chatMessage["comment"] + "<button onclick='upGooseMessage(\""+ chatMessage["id"] +"\")'> UpGoose! </button></div><br/>";
 }
 
 function userList(message) {
@@ -55,6 +61,11 @@ function userList(message) {
     }
 }
 
+function upGoose(message) {
+    let upGooseMessage = document.getElementById(message)
+    upGooseMessage.innerHTML += "Upgoose"
+}
+
 
 // called when the page loads to get the chat_history
 function get_chat_history() {
@@ -63,6 +74,7 @@ function get_chat_history() {
         if (this.readyState === 4 && this.status === 200) {
             const messages = JSON.parse(this.response);
             for (const message of messages) {
+                message["id"] = message["_id"]["$oid"]
                 addMessage(message);
             }
         }
@@ -79,6 +91,9 @@ socket.onmessage = function (ws_message) {
     switch (messageType) {
         case 'chatMessage':
             addMessage(message);
+            break;
+        case 'upGoose':
+            upGoose(message["id"]);
             break;
         case 'directMessage':
             addMessage(message)
