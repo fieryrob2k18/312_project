@@ -124,6 +124,6 @@ def getUsrPfp(username, profiles):
     result = json.loads(profiles.getMany("username", username))
     print(result, flush = True)
     if result is not None:
-        if "profilepic" not in result:
+        if "profilepic" not in result[0]:
             return "default.jpg"
         return result[0]["profilepic"]
