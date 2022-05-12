@@ -87,45 +87,49 @@ def webSocketServer(conn, username):
         if opcode == 1:
             # Format is text
             data = json.loads(payload)
-            if data["messageType"] == "chatMessage":
-                messageText = html.escape(data["comment"])
-                res = databases["comments"].addOne(
-                    {"username": username, "comment": messageText}
-                )
-                response = json.dumps(
-                    {
-                        "messageType": "chatMessage",
-                        "username": username,
-                        "comment": messageText,
-                        "id": str(res)
-                    }
-                )
-                frame = makeFrame(response)
-                for c in activeConnections.items():
-                    c[1].send(frame)
-            elif data["messageType"] == "directMessage":
-                messageText = html.escape(data["comment"])
-                user = html.escape(data["recipient"])
-                response = json.dumps(
-                    {
-                        "messageType": "directMessage",
-                        "username": username,
-                        "comment": messageText,
-                    }
-                )
-                frame = makeFrame(response)
-                activeConnections[user].send(frame)
-                conn.send(frame)
-            elif data["messageType"] == "upGoose":
-                response = json.dumps(
-                    {
-                        "messageType": "upGoose",
-                        "id": data["id"],
-                    }
-                )
-                frame = makeFrame(response)
-                for c in activeConnections.items():
-                    c[1].send(frame)
+            match data["messageType"]:
+                case "chatMessage":
+                    messageText = html.escape(data["comment"])
+                    res = databases["comments"].addOne(
+                        {"username": username, "comment": messageText, "ups": []}
+                    )
+                    response = json.dumps(
+                        {
+                            "messageType": "chatMessage",
+                            "username": username,
+                            "comment": messageText,
+                            "id": str(res)
+                        }
+                    )
+                    frame = makeFrame(response)
+                    for c in activeConnections.items():
+                        c[1].send(frame)
+                case "directMessage":
+                    messageText = html.escape(data["comment"])
+                    user = html.escape(data["recipient"])
+                    response = json.dumps(
+                        {
+                            "messageType": "directMessage",
+                            "username": username,
+                            "comment": messageText,
+                        }
+                    )
+                    frame = makeFrame(response)
+                    activeConnections[user].send(frame)
+                    conn.send(frame)
+                case "upGoose":
+                    fetch = json.loads(databases["comments"].getOne(data["id"]))
+                    if username not in fetch["ups"]:
+                        databases["comments"].updateOne(data["id"], {"username": username, "comment": fetch["comment"], "ups": fetch["ups"].append(username)})
+                        response = json.dumps(
+                            {
+                                "messageType": "upGoose",
+                                "id": data["id"],
+                            }
+                        )
+                        frame = makeFrame(response)
+                        for c in activeConnections.items():
+                            c[1].send(frame)
                 
         if opcode == 2:
             # Format is binary
