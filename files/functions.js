@@ -35,7 +35,6 @@ function sendDirectMessage() {
 }
 
 function upGooseMessage(id) {
-    console.log(id)
     if (id !== "") {
         socket.send(JSON.stringify({ 'messageType': 'upGoose', 'id': id }));
     }
@@ -56,9 +55,9 @@ function userList(message) {
 }
 
 function upGoose(message) {
-    let upGooseMessage = document.getElementById(message['_id']['$oid'])
+    let upGooseMessage = document.getElementById(message)
     upGooseMessage.innerHTML += "Upgoose"
-}a
+}
 
 
 // called when the page loads to get the chat_history
@@ -86,7 +85,7 @@ socket.onmessage = function (ws_message) {
             addMessage(message);
             break;
         case 'upGoose':
-            upGoose(message);
+            upGoose(message["id"]);
             break;
         case 'directMessage':
             addMessage(message)

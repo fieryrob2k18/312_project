@@ -108,6 +108,17 @@ def webSocketServer(conn, username):
                 frame = makeFrame(response)
                 activeConnections[user].send(frame)
                 conn.send(frame)
+            elif data["messageType"] == "upGoose":
+                response = json.dumps(
+                    {
+                        "messageType": "upGoose",
+                        "id": data["id"],
+                    }
+                )
+                frame = makeFrame(response)
+                for c in activeConnections.items():
+                    c[1].send(frame)
+                
         if opcode == 2:
             # Format is binary
             return
