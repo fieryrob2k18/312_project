@@ -82,15 +82,16 @@ def webSocketServer(conn, username):
             data = json.loads(payload)
             if data["messageType"] == "chatMessage":
                 messageText = html.escape(data["comment"])
+                res = databases["comments"].addOne(
+                    {"username": username, "comment": messageText}
+                )
                 response = json.dumps(
                     {
                         "messageType": "chatMessage",
                         "username": username,
                         "comment": messageText,
+                        "id": str(res)
                     }
-                )
-                databases["comments"].addOne(
-                    {"username": username, "comment": messageText}
                 )
                 frame = makeFrame(response)
                 for c in activeConnections.items():

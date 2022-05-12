@@ -43,7 +43,7 @@ function upGooseMessage(id) {
 // Renders a new chat message to the page
 function addMessage(chatMessage) {
     let chat = document.getElementById('chat');
-    chat.innerHTML += "<div id='" + chatMessage["_id"]["$oid"] + "'> <b>" + chatMessage['username'] + "</b>: " + chatMessage["comment"] + "<button onclick='upGooseMessage(\""+ chatMessage["_id"]["$oid"] +"\")'> UpGoose! </button></div><br/>";
+    chat.innerHTML += "<div id='" + chatMessage["id"] + "'> <b>" + chatMessage['username'] + "</b>: " + chatMessage["comment"] + "<button onclick='upGooseMessage(\""+ chatMessage["id"] +"\")'> UpGoose! </button></div><br/>";
 }
 
 function userList(message) {
@@ -67,6 +67,7 @@ function get_chat_history() {
         if (this.readyState === 4 && this.status === 200) {
             const messages = JSON.parse(this.response);
             for (const message of messages) {
+                message["id"] = message["_id"]["$oid"]
                 addMessage(message);
             }
         }

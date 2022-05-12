@@ -8,7 +8,8 @@ class MongoDB:
         self.collection = database[collName]
 
     def addOne(self, body):
-        self.collection.insert_one(body)
+        r = self.collection.insert_one(body)
+        return r.inserted_id
 
     def addMany(self, body):
         self.collection.insert_many(body)
