@@ -99,7 +99,7 @@ def digestForm(headers, body, desiredparts: list[str]):
 def saveImage(imagebyes, imagecounter):
     temp = imagecounter.getFirst()
     if temp is None:
-        imagecounter.addOne(json.dumps({"mostrecent": 1}))
+        imagecounter.addOne({"mostrecent": 1})
     aidee = json.loads(imagecounter.getFirst())["mostrecent"]
     # TODO change this to whatever filename prefix is used for sending the images to the client
     filename = "image/pic" + str(aidee) + ".jpg"
