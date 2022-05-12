@@ -1,6 +1,7 @@
 # imports
 import sys
 import bcrypt
+import json
 from websocket import upgrade
 import utils as u
 import template as t
@@ -60,18 +61,21 @@ def routeToResponse(requestmethod, path, body, headers):
                     return u.sendFile("files/" + filename, "image/jpeg")
                 # TODO add filename to users database once username is associated
                 authtoken = None
-                if "Cookie" in inhead:
+                if "Cookie" in headers:
                     cookieslist = headers["Cookie"].split(";")
                     for cookie in cookieslist:
                         cookie = cookie.strip()
                         if cookie.startswith("authtoken"):
                             authtoken = cookie.split("=")[1]
                             username = u.checkAuthToken(authtoken, databases["authtokens"])
-                            if uname is not None:
-                                result = json.loads(databases["users"].getMany("username", username))
+                            if username is not None:
+                                result = json.loads(databases["usernames"].getMany("username", username))
+                                print("Result is:")
+                                print(result, flush=True)
                                 if result is not None:
+                                    print("Updating pfp", flush = True)
                                     id = result[0]["_id"]["$oid"]
-                                    m.updateOne(id, {"profilepic": filename})
+                                    databases["usernames"].updateOne(id, {"profilepic": filename})
                 # redirect user to main page
                 return u.generateResponse("".encode(), "", "303 See Other", ["Location: /main"])
         # path of /

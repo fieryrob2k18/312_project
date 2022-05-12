@@ -5,12 +5,14 @@ import html
 import json
 import random
 import mongo as m
+import utils as u
 
 from tomli import TOMLDecodeError
 
 activeConnections = {}
 
-databases = {"comments": m.MongoDB("mongo", "comments", "comments")}
+databases = {"comments": m.MongoDB("mongo", "comments", "comments"),
+             "usernames": m.MongoDB("mongo", "users", "usernames")}
 
 
 def upgrade(req):
@@ -28,9 +30,14 @@ def upgrade(req):
 def webSocketServer(conn, username):
     while True:
         activeConnections[username] = conn
+        respdict = {}
+        for user in activeConnections.keys():
+            respdict[user] = u.getUsrPfp(user, databases["usernames"])
+        print(respdict, flush=True)
         response = json.dumps(
-            {"messageType": "userList", "users": list(activeConnections.keys())}
+            {"messageType": "userList", "users": respdict}
         )
+        print(response, flush=True)
         frame = makeFrame(response)
         conn.send(frame)
         buffer = conn.recv(1024)

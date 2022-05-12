@@ -42,9 +42,16 @@ function addMessage(chatMessage) {
 
 function userList(message) {
     let users = document.getElementById('users');
-    users.innerHTML = ""
-    for (var user in message["users"]) {
-        users.innerHTML += "<b>" + message["users"][user] + "</b> " + "<br/>";
+    users.innerHTML = "";
+    console.log(message);
+    console.log(Object.entries(message["users"]));
+    for (var [user, stuff] of Object.entries(message["users"])) {
+	users.innerHTML += "<div class=\"username\">";
+        users.innerHTML += "<b>" + user + "</b> " + "<br/>";
+	users.innerHTML += "<img class=\"profileimg\" src=\"" + stuff + "\"></div><br/>"
+    }
+    if (users.innerHTML === "") {
+	users.innerHTML = "<h3>No users online currently!</h3>"
     }
 }
 

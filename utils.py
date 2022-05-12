@@ -53,7 +53,7 @@ def handleRegister(userpassmap, userbase):
     if DEBUG:
         print(username, flush=True)
     # put username and hashed password in database
-    userbase.addOne({"username": username, "password": hashedpass.decode()})
+    userbase.addOne({"username": username, "password": hashedpass.decode(), "profilepic": "default.jpg"})
     return username
 
 # formats a response based on the inputs, encoding type is utf-8 unless otherwise specified
@@ -99,8 +99,10 @@ def digestForm(headers, body, desiredparts: list[str]):
 def saveImage(imagebyes, imagecounter):
     temp = imagecounter.getFirst()
     if temp is None:
-        imagecounter.addOne(json.dumps({"mostrecent": 1}))
+        imagecounter.addOne({"mostrecent": 1})
     aidee = json.loads(imagecounter.getFirst())["mostrecent"]
+    print("Image count")
+    print(aidee, flush = True)
     # TODO change this to whatever filename prefix is used for sending the images to the client
     filename = "image/pic" + str(aidee) + ".jpg"
     with open("files/" + filename, "wb") as content:
@@ -115,3 +117,13 @@ def getChatHistory(db):
     print(comments)
     print(type(comments))
     return bytes(comments, "utf-8")
+
+
+#Check if a given user is in the db and what their pfp is
+def getUsrPfp(username, profiles):
+    result = json.loads(profiles.getMany("username", username))
+    print(result, flush = True)
+    if result is not None:
+        if "profilepic" not in result:
+            return "default.jpg"
+        return result[0]["profilepic"]
