@@ -35,7 +35,7 @@ def webSocketServer(conn, username):
             respdict[user] = u.getUsrPfp(user, databases["usernames"])
         print(respdict, flush=True)
         response = json.dumps(
-            {"messageType": "userList", "users": respdict}
+            {"messageType": "userList", "users": respdict, "username": username}
         )
         print(response, flush=True)
         frame = makeFrame(response)

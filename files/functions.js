@@ -61,7 +61,9 @@ function userList(message) {
     let userSelect = document.getElementById("dm-user");
     userSelect.innerHTML = "<option value='all'>All</option>"
     for (var [user, stuff] of Object.entries(message["users"])) {
-        userSelect.innerHTML += "<option value='" + user + "'>" + user + "</option>"
+        if (user != message["username"]){
+            userSelect.innerHTML += "<option value='" + user + "'>" + user + "</option>"
+        }
     }
 }
 
