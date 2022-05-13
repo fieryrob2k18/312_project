@@ -63,12 +63,6 @@ function userList(message) {
     for (var [user, stuff] of Object.entries(message["users"])) {
         userSelect.innerHTML += "<option value='" + user + "'>" + user + "</option>"
     }
-
-    function upGoose(message) {
-        let upGooseMessage = document.getElementById(message)
-        console.log(upGooseMessage)
-        upGooseMessage.innerHTML = parseInt(upGooseMessage.innerHTML) + 1
-    }
 }
 
 // called when the page loads to get the chat_history

@@ -108,7 +108,7 @@ def webSocketServer(conn, username):
                     if recipient == "all":
                         for c in activeConnections.items():
                             c[1].send(frame)
-                    else:
+                    elif recipient != username:
                         activeConnections[recipient].send(frame)
                         conn.send(frame)
                 case "upGoose":
