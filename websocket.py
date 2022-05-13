@@ -98,7 +98,8 @@ def webSocketServer(conn, username):
                             "messageType": "chatMessage",
                             "username": username,
                             "comment": messageText,
-                            "id": str(res)
+                            "id": str(res),
+                            "ups": [],
                         }
                     )
                     frame = makeFrame(response)
@@ -119,8 +120,9 @@ def webSocketServer(conn, username):
                     conn.send(frame)
                 case "upGoose":
                     fetch = json.loads(databases["comments"].getOne(data["id"]))
+                    print(fetch, flush=True)
                     if username not in fetch["ups"]:
-                        databases["comments"].updateOne(data["id"], {"username": username, "comment": fetch["comment"], "ups": fetch["ups"].append(username)})
+                        databases["comments"].updateOne(data["id"], {"username": username, "comment": fetch["comment"], "ups": fetch["ups"] + [username]})
                         response = json.dumps(
                             {
                                 "messageType": "upGoose",

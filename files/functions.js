@@ -43,7 +43,7 @@ function upGooseMessage(id) {
 // Renders a new chat message to the page
 function addMessage(chatMessage) {
     let chat = document.getElementById('chat');
-    chat.innerHTML += "<div id='" + chatMessage["id"] + "'> <b>" + chatMessage['username'] + "</b>: " + chatMessage["comment"] + "<button onclick='upGooseMessage(\""+ chatMessage["id"] +"\")'> UpGoose! </button></div><br/>";
+    chat.innerHTML = "<b>" + chatMessage['username'] + "</b>: " + chatMessage["comment"] + "<button onclick='upGooseMessage(\""+ chatMessage["id"] +"\")'> UpGoose! </button><div id='" + chatMessage["id"] + "'>" + chatMessage["ups"].length + "</div><br/>" + chat.innerHTML;
 }
 
 function userList(message) {
@@ -63,7 +63,8 @@ function userList(message) {
 
 function upGoose(message) {
     let upGooseMessage = document.getElementById(message)
-    upGooseMessage.innerHTML += "Upgoose"
+    console.log(upGooseMessage)
+    upGooseMessage.innerHTML = parseInt(upGooseMessage.innerHTML) + 1
 }
 
 
