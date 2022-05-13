@@ -14,23 +14,12 @@ document.addEventListener("keypress", function (event) {
 function sendMessage() {
     const chatBox = document.getElementById("chat-comment");
     const comment = chatBox.value;
-    chatBox.value = "";
-    chatBox.focus();
-    if (comment !== "") {
-        socket.send(JSON.stringify({ 'messageType': 'chatMessage', 'comment': comment }));
-    }
-}
-
-function sendDirectMessage() {
-    const chatBox = document.getElementById("dm-comment");
-    const comment = chatBox.value;
     const userBox = document.getElementById("dm-user");
     const recipient = userBox.value;
     chatBox.value = "";
     chatBox.focus();
-    userBox.value = "";
     if (comment !== "") {
-        socket.send(JSON.stringify({ 'messageType': 'directMessage', 'comment': comment, 'recipient': recipient }));
+        socket.send(JSON.stringify({ 'messageType': 'chatMessage', 'comment': comment, 'recipient': recipient }));
     }
 }
 
@@ -43,21 +32,10 @@ function upGooseMessage(id) {
 // Renders a new chat message to the page
 function addMessage(chatMessage) {
     let chat = document.getElementById('chat');
-    chat.innerHTML = "<b>" + chatMessage['username'] + "</b>: " + chatMessage["comment"] + "<button onclick='upGooseMessage(\""+ chatMessage["id"] +"\")'> UpGoose! </button><div id='" + chatMessage["id"] + "'>" + chatMessage["ups"].length + "</div><br/>" + chat.innerHTML;
-}
-
-function userList(message) {
-    let users = document.getElementById('users');
-    users.innerHTML = "";
-    console.log(message);
-    console.log(Object.entries(message["users"]));
-    for (var [user, stuff] of Object.entries(message["users"])) {
-	users.innerHTML += "<div class=\"username\">";
-        users.innerHTML += "<b>" + user + "</b> " + "<br/>";
-	users.innerHTML += "<img class=\"profileimg\" src=\"" + stuff + "\"></div><br/>"
-    }
-    if (users.innerHTML === "") {
-	users.innerHTML = "<h3>No users online currently!</h3>"
+    if (chatMessage["recipient"] == "all") {
+        chat.innerHTML = "<b>" + chatMessage['username'] + "</b>: " + chatMessage["comment"] + "<button onclick='upGooseMessage(\"" + chatMessage["id"] + "\")'> UpGoose! </button><div id='" + chatMessage["id"] + "'>" + chatMessage["ups"].length + "</div><br/>" + chat.innerHTML;
+    } else {
+        chat.innerHTML = "<b>DM: " + chatMessage['username'] + "</b>: " + chatMessage["comment"] + "<button onclick='upGooseMessage(\"" + chatMessage["id"] + "\")'> UpGoose! </button><div id='" + chatMessage["id"] + "'>" + chatMessage["ups"].length + "</div><br/>" + chat.innerHTML;
     }
 }
 
@@ -67,6 +45,31 @@ function upGoose(message) {
     upGooseMessage.innerHTML = parseInt(upGooseMessage.innerHTML) + 1
 }
 
+function userList(message) {
+    let users = document.getElementById('users');
+    users.innerHTML = "";
+    console.log(message);
+    console.log(Object.entries(message["users"]));
+    for (var [user, stuff] of Object.entries(message["users"])) {
+        users.innerHTML += "<div class=\"username\">";
+        users.innerHTML += "<b>" + user + "</b> " + "<br/>";
+        users.innerHTML += "<img class=\"profileimg\" src=\"" + stuff + "\"></div><br/>"
+    }
+    if (users.innerHTML === "") {
+        users.innerHTML = "<h3>No users online currently!</h3>"
+    }
+    let userSelect = document.getElementById("dm-user");
+    userSelect.innerHTML = "<option value='all'>All</option>"
+    for (var [user, stuff] of Object.entries(message["users"])) {
+        userSelect.innerHTML += "<option value='" + user + "'>" + user + "</option>"
+    }
+
+    function upGoose(message) {
+        let upGooseMessage = document.getElementById(message)
+        console.log(upGooseMessage)
+        upGooseMessage.innerHTML = parseInt(upGooseMessage.innerHTML) + 1
+    }
+}
 
 // called when the page loads to get the chat_history
 function get_chat_history() {
@@ -95,9 +98,6 @@ socket.onmessage = function (ws_message) {
             break;
         case 'upGoose':
             upGoose(message["id"]);
-            break;
-        case 'directMessage':
-            addMessage(message)
             break;
         case 'userList':
             userList(message)

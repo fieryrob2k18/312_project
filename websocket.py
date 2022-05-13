@@ -90,8 +90,9 @@ def webSocketServer(conn, username):
             match data["messageType"]:
                 case "chatMessage":
                     messageText = html.escape(data["comment"])
+                    recipient = html.escape(data["recipient"])
                     res = databases["comments"].addOne(
-                        {"username": username, "comment": messageText, "ups": []}
+                        {"username": username, "comment": messageText, "ups": [], "recipient": recipient }
                     )
                     response = json.dumps(
                         {
@@ -100,24 +101,16 @@ def webSocketServer(conn, username):
                             "comment": messageText,
                             "id": str(res),
                             "ups": [],
+                            "recipient": recipient
                         }
                     )
                     frame = makeFrame(response)
-                    for c in activeConnections.items():
-                        c[1].send(frame)
-                case "directMessage":
-                    messageText = html.escape(data["comment"])
-                    user = html.escape(data["recipient"])
-                    response = json.dumps(
-                        {
-                            "messageType": "directMessage",
-                            "username": username,
-                            "comment": messageText,
-                        }
-                    )
-                    frame = makeFrame(response)
-                    activeConnections[user].send(frame)
-                    conn.send(frame)
+                    if recipient == "all":
+                        for c in activeConnections.items():
+                            c[1].send(frame)
+                    else:
+                        activeConnections[recipient].send(frame)
+                        conn.send(frame)
                 case "upGoose":
                     fetch = json.loads(databases["comments"].getOne(data["id"]))
                     print(fetch, flush=True)
@@ -161,11 +154,11 @@ def makeFrame(payload):
         frame[1] = length
     elif length >= 126 and length < 65536:
         frame[1] = 126
-        frame[2:4] = length
+        frame[2:4] = length.to_bytes(2, 'big')
         payloadIndex = 4
     elif length >= 65536:
         frame[1] = 127
-        frame[2:10] = length
+        frame[2:10] = length.to_bytes(8, 'big')
         payloadIndex = 10
 
     for b in payload:

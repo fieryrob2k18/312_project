@@ -23,12 +23,9 @@
   <h2>Users Online:</h2>
   <div id="users"></div>
 
-  <label for="dm-comment">DMs: </label>
-  <input id="dm-user" type="text" name="dm-user">
-  <input id="dm-comment" type="text" name="dm">
-  <button onclick="sendDirectMessage()">Send</button>
-
-  <label for="chat-comment">Chat: </label>
+  <label for="dm-comment">Chat: </label>
+  <select id="dm-user" name="dm-user">
+  </select> 
   <input id="chat-comment" type="text" name="comment">
 
   <button onclick="sendMessage()">Send</button>

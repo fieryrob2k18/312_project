@@ -110,8 +110,15 @@ def routeToResponse(requestmethod, path, body, headers):
             return u.generateResponse("".encode(), "", "101 Switching Protocols", upgrade(headers))
         #Getting chat history
         case "chat-history":
-            chatJson = u.getChatHistory(databases["comments"])
-            return u.generateResponse(chatJson, "application/json", "200 OK", [])
+            chat = json.loads(u.getChatHistory(databases["comments"]))
+            username = u.authTokenToUsername(headers, databases["authtokens"])
+            newChat = []
+            for message in chat:
+                print(username, flush=True)
+                print(message["recipient"], flush=True)
+                if message["recipient"] == "all" or message["recipient"] == username:
+                    newChat.append(message)
+            return u.generateResponse(json.dumps(newChat).encode(), "application/json", "200 OK", [])
         # if the path doesn't match anything (404)
         case _:
             return u.sendFile("files/notfound.html", "text/html", "404 Not Found")
