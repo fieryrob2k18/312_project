@@ -11,6 +11,17 @@ import json
 
 DEBUG = True
 
+# takes in headers and authtokens database, returns username for the auth token or None if there's no/wrong token
+def authTokenToUsername(headers, database):
+    username = None
+    if "Cookie" in headers:
+        cookieslist = headers["Cookie"].split(";")
+        for cookie in cookieslist:
+            cookie = cookie.strip()
+            if cookie.startswith("authtoken"):
+                username = checkAuthToken(cookie.split("=")[1], database)
+    return username
+
 # does what it says on the tin and saves the token in database
 def generateAuthToken(username, database):
     characterbank = string.ascii_letters + string.digits

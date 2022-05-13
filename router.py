@@ -60,22 +60,15 @@ def routeToResponse(requestmethod, path, body, headers):
                     print(filename, flush=True)
                     return u.sendFile("files/" + filename, "image/jpeg")
                 # TODO add filename to users database once username is associated
-                authtoken = None
-                if "Cookie" in headers:
-                    cookieslist = headers["Cookie"].split(";")
-                    for cookie in cookieslist:
-                        cookie = cookie.strip()
-                        if cookie.startswith("authtoken"):
-                            authtoken = cookie.split("=")[1]
-                            username = u.checkAuthToken(authtoken, databases["authtokens"])
-                            if username is not None:
-                                result = json.loads(databases["usernames"].getMany("username", username))
-                                print("Result is:")
-                                print(result, flush=True)
-                                if result is not None:
-                                    print("Updating pfp", flush = True)
-                                    id = result[0]["_id"]["$oid"]
-                                    databases["usernames"].updateOne(id, {"profilepic": filename})
+                username = u.authTokenToUsername(headers, databases["authtokens"])
+                if username is not None:
+                    result = json.loads(databases["usernames"].getMany("username", username))
+                    print("Result is:")
+                    print(result, flush=True)
+                    if result is not None:
+                        print("Updating pfp", flush=True)
+                        id = result[0]["_id"]["$oid"]
+                        databases["usernames"].updateOne(id, {"profilepic": filename})
                 # redirect user to main page
                 return u.generateResponse("".encode(), "", "303 See Other", ["Location: /main"])
         # path of /
@@ -85,9 +78,13 @@ def routeToResponse(requestmethod, path, body, headers):
             return u.generateResponse(t.renderHtmlTemplate(html), "text/html", "200 OK", [])
         # path of /main
         case "main":
-            with open("files/main.html", "rb") as content:
-                html = content.read()
-            return u.generateResponse(t.renderHtmlTemplate(html), "text/html", "200 OK", [])
+            username = u.authTokenToUsername(headers, databases["authtokens"])
+            if username is not None:
+                with open("files/main.html", "rb") as content:
+                    html = content.read()
+                return u.generateResponse(t.renderHtmlTemplate(html), "text/html", "200 OK", [])
+            else:
+                return u.generateResponse("".encode(), "", "303 See Other", ["Location: /"])
         #stylesheet
         case "goosestyle.css":
             with open("files/goosestyle.css", "rb") as content:
